@@ -37,16 +37,20 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
       
-          # Ensure authenticated remote
+          # Set authenticated remote URL
           git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}
       
-          # Rebase onto latest master (prevents push conflict)
-          git fetch origin master
+          # Make sure we're on the correct branch
+          git checkout master
+      
+          # Fetch and rebase from origin/master to prevent non-fast-forward error
+          git fetch origin
           git rebase origin/master || true
       
+          # Commit changes (only if there are any)
           git add .
           git commit -m "Automated update of talk locations" || echo "No changes to commit"
       
-          # Push changes (only if new commit was made)
-          git push origin HEAD:master
+          # Push safely to origin/master
+          git push origin master
 
