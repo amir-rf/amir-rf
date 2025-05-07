@@ -1,39 +1,55 @@
 name: Scrape Talk Locations
+
 on:
   push:
     branches: [ master ]
     paths:
       - 'talks/**'
       - 'talkmap.ipynb'
+
 jobs:
   update-talk-map:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout repo with full history
+        uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # fetch full history to allow rebasing
-          ref: master     # ensure we are on the master branch
+          fetch-depth: 0
+          ref: master
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
+
       - name: Install dependencies
         run: |
           pip install jupyter pandas requests beautifulsoup4 geopy
           pip install getorg --upgrade
+
       - name: Run Jupyter Notebook to update talks
         run: |
           jupyter nbconvert --to notebook --execute talkmap.ipynb --output talkmap_out.ipynb
-      - name: Commit changes
+
+      - name: Commit and Force Push Changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Automated update of talk locations" || echo "No changes to commit"
-      - name: Rebase onto latest master
-        run: |
+
+          # Authenticate with token
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}
+
+          # Make sure we’re on master and rebased
+          git checkout master
           git fetch origin master
-          git rebase origin/master
-      - name: Push updates
-        run: git push origin HEAD:master
+          git rebase origin/master || echo "Rebase failed or not needed"
+
+          # Commit changes
+          git add .
+          git commit -m "Automated update of talk locations" || echo "No changes to commit"
+
+          # SAFE force-push to your own fork
+          git push origin master --force
