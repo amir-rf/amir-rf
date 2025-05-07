@@ -1,55 +1,39 @@
 name: Scrape Talk Locations
-
 on:
   push:
+    branches: [ master ]
     paths:
       - 'talks/**'
       - 'talkmap.ipynb'
-
 jobs:
-  build:
+  update-talk-map:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo with full history
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-
+          fetch-depth: 0  # fetch full history to allow rebasing
+          ref: master     # ensure we are on the master branch
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-
       - name: Install dependencies
         run: |
           pip install jupyter pandas requests beautifulsoup4 geopy
           pip install getorg --upgrade
-
-      - name: Run Jupyter Notebook
+      - name: Run Jupyter Notebook to update talks
         run: |
           jupyter nbconvert --to notebook --execute talkmap.ipynb --output talkmap_out.ipynb
-
-      - name: Commit and Push Changes
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Set authenticated remote
-          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}
-
-          # Ensure we're on the correct branch and tracking it
-          git checkout master
-          git branch --set-upstream-to=origin/master
-
-          # Pull latest changes and rebase
-          git pull --rebase origin master || echo "Rebase skipped or failed"
-
-          # Stage and commit any changes
-          git add .
-          git commit -m "Automated update of talk locations" || echo "Nothing to commit"
-
-          # Push to master branch
-          git push origin master
+          git add -A
+          git commit -m "Automated update of talk locations" || echo "No changes to commit"
+      - name: Rebase onto latest master
+        run: |
+          git fetch origin master
+          git rebase origin/master
+      - name: Push updates
+        run: git push origin HEAD:master
