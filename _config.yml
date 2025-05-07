@@ -23,9 +23,9 @@ repository               : "academicpages/academicpages.github.io"
 author:
   # Biographic information
   avatar           : "profile.png"
-  name             : "Sidebar Name"
+  name             : "test Sidebar Name"
   pronouns         : # example: "she/her"  
-  bio              : "Short biography left-hand sidebar"
+  bio              : "test Short biography left-hand sidebar"
   location         : "Earth"
   employer         : "Red Brick University"
   uri              : # URL
