@@ -7,63 +7,33 @@ permalink: /publications/
 ## Journal Articles
 
 {% assign journal_pubs = site.publications | where: "type", "Journal" %}
-{% if journal_pubs.size > 0 %}
-<ul>
-  {% for pub in journal_pubs %}
-    <li>
-      <strong>{{ pub.title }}</strong><br>
-      {{ pub.authors }}<br>
-      <em>{{ pub.venue }}</em>, {{ pub.date | date: "%Y" }}
-      {% if pub.paperurl %}
-        <a href="{{ pub.paperurl }}" target="_blank">[PDF]</a>
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
-{% else %}
-<p>No journal articles listed yet.</p>
-{% endif %}
+{% for pub in journal_pubs %}
+- **{{ pub.title }}**  
+  {{ pub.authors }}  
+  _{{ pub.venue }}_, {{ pub.date | date: "%Y" }}
+  {% if pub.paperurl %}[PDF]({{ pub.paperurl }}){% endif %}
+{% endfor %}
 
 ---
 
 ## Conference Papers
 
 {% assign conf_pubs = site.publications | where: "type", "Conference" %}
-{% if conf_pubs.size > 0 %}
-<ul>
-  {% for pub in conf_pubs %}
-    <li>
-      <strong>{{ pub.title }}</strong><br>
-      {{ pub.authors }}<br>
-      <em>{{ pub.venue }}</em>, {{ pub.date | date: "%Y" }}
-      {% if pub.paperurl %}
-        <a href="{{ pub.paperurl }}" target="_blank">[PDF]</a>
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
-{% else %}
-<p>No conference papers listed yet.</p>
-{% endif %}
+{% for pub in conf_pubs %}
+- **{{ pub.title }}**  
+  {{ pub.authors }}  
+  _{{ pub.venue }}_, {{ pub.date | date: "%Y" }}
+  {% if pub.paperurl %}[PDF]({{ pub.paperurl }}){% endif %}
+{% endfor %}
 
 ---
 
 ## Datasets
 
 {% assign dataset_pubs = site.publications | where: "type", "Dataset" %}
-{% if dataset_pubs.size > 0 %}
-<ul>
-  {% for pub in dataset_pubs %}
-    <li>
-      <strong>{{ pub.title }}</strong><br>
-      {{ pub.authors }}<br>
-      <em>{{ pub.venue }}</em>, {{ pub.date | date: "%Y" }}
-      {% if pub.paperurl %}
-        <a href="{{ pub.paperurl }}" target="_blank">[Link]</a>
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
-{% else %}
-<p>No datasets listed yet.</p>
-{% endif %}
+{% for pub in dataset_pubs %}
+- **{{ pub.title }}**  
+  {{ pub.authors }}  
+  _{{ pub.venue }}_, {{ pub.date | date: "%Y" }}
+  {% if pub.paperurl %}[Link]({{ pub.paperurl }}){% endif %}
+{% endfor %}
